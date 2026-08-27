@@ -9,17 +9,19 @@ import torch
 from jaxtyping import Bool, Float, Int
 from torch import Tensor
 
-
+# use colab or other to pytest this project
 try:
     from cs336_basics.train_bpe import train_bpe
     from cs336_basics.tokenizer import Tokenizer
     from cs336_basics.model import Linear, Embedding, RMSNorm, SwiGLU, RotaryPositionalEmbedding
     from cs336_basics.model import scaled_dot_product_attention
-
+    
+# use your local device to pytest this project
 except ImportError:
     from train_bpe import train_bpe
     from tokenizer import Tokenizer
     from model import Linear, Embedding, RMSNorm, SwiGLU, RotaryPositionalEmbedding
+    from model import scaled_dot_product_attention
 
 
 
@@ -123,7 +125,7 @@ def run_scaled_dot_product_attention(
     Returns:
         Float[Tensor, " ... queries d_v"]: Output of SDPA
     """
-    return Q, K, V, mask
+    return scaled_dot_product_attention(Q, K, V, mask)
 
 
 def run_multihead_self_attention(
