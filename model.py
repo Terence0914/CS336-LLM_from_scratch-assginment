@@ -1,6 +1,7 @@
 import torch
 from torch import nn
 import math
+from einops import rearrange, einsum
 
 class Linear(nn.Module):
     def __init__ (self, in_features : int, out_features : int, device: torch.device | None = None, dtype: torch.dtype | None = None):
@@ -87,3 +88,15 @@ class RotaryPositionalEmbedding(nn.Module):
         rotated_odd = x_even * sin + x_odd * cos
         return torch.stack((rotated_even, rotated_odd), dim=-1).flatten(-2)
 
+def scaled_dot_product_attention(Q, K, V, mask = None):
+    K_value = rearrange(K, "... keys d_k -> ... d_k keys")
+    scores = Q @ K_value / math.sqrt(Q.shape[-1])
+    if mask is not None:
+        scores = scores.masked_fill(~mask, float("-inf"))
+    probabilities = torch.softmax(scores, dim = -1)
+
+    combined = einsum(
+        probabilities, V,
+        "... query key, ... key width -> ... query width"
+    )
+    return combined

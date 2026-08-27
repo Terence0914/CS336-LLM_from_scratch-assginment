@@ -14,6 +14,7 @@ try:
     from cs336_basics.train_bpe import train_bpe
     from cs336_basics.tokenizer import Tokenizer
     from cs336_basics.model import Linear, Embedding, RMSNorm, SwiGLU, RotaryPositionalEmbedding
+    from cs336_basics.model import scaled_dot_product_attention
 
 except ImportError:
     from train_bpe import train_bpe
@@ -122,7 +123,7 @@ def run_scaled_dot_product_attention(
     Returns:
         Float[Tensor, " ... queries d_v"]: Output of SDPA
     """
-    raise NotImplementedError
+    return Q, K, V, mask
 
 
 def run_multihead_self_attention(

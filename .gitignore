@@ -1,0 +1,51 @@
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Test and coverage artifacts (keep test source files tracked)
+.pytest_cache/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+test-results/
+.tox/
+.nox/
+
+# Type-checker and linter caches
+.mypy_cache/
+.pyright/
+.ruff_cache/
+
+# Virtual environments and local environment variables
+.venv/
+venv/
+env/
+.env
+.env.*
+!.env.example
+
+# Packaging outputs
+build/
+dist/
+*.egg-info/
+
+# Local scratch files and logs
+tmp/
+temp/
+*.log
+
+# Training outputs and local checkpoints
+checkpoints/
+runs/
+wandb/
+*.ckpt
+*.pt
+*.pth
+
+# Editor and operating-system files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
