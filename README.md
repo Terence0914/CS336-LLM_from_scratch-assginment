@@ -1,10 +1,10 @@
-# CS336 Assignment 1 with Modern LLM Extensions
+# CS336 Assignments with Modern LLM Extensions
 
 > Temporary bilingual README / 暂时性双语说明
 
-This is an independent educational implementation based on Stanford University's **CS336: Language Modeling from Scratch — Assignment 1: Basics**. It is not an official Stanford repository and is not affiliated with Stanford University, Moonshot AI, or DeepSeek.
+This is an independent educational and research implementation following Stanford University's **CS336: Language Modeling from Scratch** assignments. The project begins with Assignment 1 and will progressively study systems, scaling, data, and alignment topics from Assignments 2–5. It is not an official Stanford repository and is not affiliated with Stanford University, Moonshot AI, or DeepSeek.
 
-本项目是基于斯坦福大学 **CS336：Language Modeling from Scratch — Assignment 1: Basics** 的个人学习与研究实现，并非斯坦福官方仓库，也不代表斯坦福大学、Moonshot AI 或 DeepSeek。
+本项目是沿斯坦福大学 **CS336：Language Modeling from Scratch** 系列作业开展的个人学习与研究实现：从 Assignment 1 起步，并逐步学习 Assignment 2–5 的系统、Scaling Law、数据和对齐内容。本项目并非斯坦福官方仓库，也不代表斯坦福大学、Moonshot AI 或 DeepSeek。
 
 ---
 
@@ -12,7 +12,7 @@ This is an independent educational implementation based on Stanford University's
 
 ### 项目简介
 
-本项目以 Stanford CS336 Assignment 1 为基础，从零实现语言模型的核心组件，包括：
+本项目以 Stanford CS336 系列作业为学习主线，首先从零实现语言模型的核心组件，包括：
 
 - BPE tokenizer 与文本预处理；
 - Transformer 基础模块；
@@ -21,11 +21,11 @@ This is an independent educational implementation based on Stanford University's
 - 交叉熵损失、AdamW、学习率调度和训练循环；
 - TinyStories / OpenWebText 上的训练与评估。
 
-当前仓库正在逐步完成 Assignment 1；其中 scaled dot-product attention 已通过 Stanford CS336 提供的三阶与四阶输入测试，并通过布尔 mask 的本地数值验证。
+当前仓库处于 Assignment 1 基础实现阶段；其中 scaled dot-product attention 已通过 Stanford CS336 提供的三阶与四阶输入测试，并通过布尔 mask 的本地数值验证。后续作业将以学习和可复现实验为目标逐步加入，而不是预先宣称已经完成全部 CS336 内容。
 
 ### 与官方作业的关系
 
-Stanford CS336 Assignment 1 的核心目标是实现一个标准 Transformer 语言模型及其完整训练流程。课程会讲授 Mixture-of-Experts，但官方 Assignment 1 并未要求复现 DeepSeekMoE。因此，本项目把 DeepSeekMoE 作为独立于原作业要求的研究扩展。
+Stanford CS336 Assignment 1 的核心目标是实现一个标准 Transformer 语言模型及其完整训练流程；后续作业依次研究系统优化、Scaling Law、数据工程以及对齐与推理强化学习。课程会讲授 Mixture-of-Experts，但官方 Assignment 1 并未要求复现 DeepSeekMoE，因此本项目把 DeepSeekMoE 作为独立研究扩展。
 
 ### 个人研究扩展：复现与组合创新
 
@@ -50,7 +50,19 @@ Stanford CS336 Assignment 1 的核心目标是实现一个标准 Transformer 语
 
 DeepSeekMoE 保留为独立的预训练架构探索，不进入本项目第一阶段的后训练对比。后训练与微调将固定使用 **Dense Transformer + AttnRes**，避免同时改变基础架构和训练算法而混淆实验结论。
 
-#### 3. 轻量化 OPSD 后训练（计划中）
+#### 3. Scaling Law：用小实验预测更大训练规模（计划中）
+
+计划按照 CS336 Assignment 3 的思路，对 **标准 Dense Transformer** 与 **Dense Transformer + AttnRes** 分别建立 compute–loss scaling 曲线，研究 AttnRes 的收益是否能随模型和训练预算增长而保持。
+
+第一轮 pilot 使用相同 tokenizer、数据切分、优化器和评测集，进行约 `2 种架构 × 3 个模型规模 × 3 个计算预算` 的受控实验，并记录参数量、训练 token、理论 FLOPs、wall-clock、峰值显存和 validation loss。随后拟合：
+
+\[
+L(C)=L_{\infty}+A C^{-\alpha}
+\]
+
+其中 \(C\) 表示训练计算量。最大规模实验将尽量保留为外推验证点，用于比较预测 loss 与真实 loss，并计算两种架构达到相同 loss 时的 compute gain。第一阶段只研究预训练 Scaling Law；OPSD 与 GRPO 的 rollout-token scaling 留作后续扩展。
+
+#### 4. 轻量化 OPSD 后训练（计划中）
 
 后训练阶段计划进行一个资源受限的 **On-Policy Self-Distillation（OPSD）** 实验：同一个 Dense Transformer + AttnRes 模型分别作为 student 与带有参考答案等 privileged context 的 teacher，在 student 自己生成的轨迹上进行 token-level 分布对齐。
 
@@ -111,7 +123,7 @@ python -m pytest
 
 ### Overview
 
-This project builds on Stanford CS336 Assignment 1 and implements the core components of a language model from scratch:
+This project follows the Stanford CS336 assignment sequence, beginning with the core components of a language model from scratch:
 
 - BPE tokenization and text preprocessing;
 - foundational Transformer modules;
@@ -120,11 +132,11 @@ This project builds on Stanford CS336 Assignment 1 and implements the core compo
 - cross-entropy loss, AdamW, learning-rate scheduling, and the training loop;
 - training and evaluation on TinyStories / OpenWebText.
 
-The repository is a work in progress. The scaled dot-product attention implementation has passed the Stanford CS336 tests for third- and fourth-order tensors and has also been locally validated with a boolean mask.
+The repository is currently in the Assignment 1 implementation stage. The scaled dot-product attention implementation has passed the Stanford CS336 tests for third- and fourth-order tensors and has also been locally validated with a boolean mask. Assignments 2–5 will be incorporated progressively as learning and reproducible experiments, without claiming completion in advance.
 
 ### Relationship to the official assignment
 
-The official CS336 Assignment 1 focuses on implementing a standard Transformer language model and its end-to-end training pipeline. Although the course covers Mixture-of-Experts, Assignment 1 does not require a DeepSeekMoE reproduction. DeepSeekMoE is therefore treated here as a separate research extension.
+The official CS336 Assignment 1 focuses on implementing a standard Transformer language model and its end-to-end training pipeline. Later assignments cover systems optimization, scaling laws, data engineering, and alignment/reasoning RL. Although the course covers Mixture-of-Experts, Assignment 1 does not require a DeepSeekMoE reproduction, so DeepSeekMoE is treated here as a separate research extension.
 
 ### Personal research extensions: reproduction and integration
 
@@ -149,7 +161,19 @@ The implementation will be scaled to educational and limited-compute settings; i
 
 DeepSeekMoE remains a separate pretraining architecture study and is excluded from the first post-training comparison. Fine-tuning and post-training will use a fixed **Dense Transformer + AttnRes** architecture so that architectural changes are not confounded with training-algorithm changes.
 
-#### 3. Lightweight OPSD post-training (planned)
+#### 3. Scaling laws: predicting larger runs from small experiments (planned)
+
+Following the spirit of CS336 Assignment 3, this project will fit separate compute–loss scaling curves for the **standard Dense Transformer** and **Dense Transformer + AttnRes**, testing whether the AttnRes advantage persists as model size and training budget increase.
+
+The pilot grid will hold the tokenizer, data split, optimizer, and evaluation set fixed while running roughly `2 architectures × 3 model sizes × 3 compute budgets`. Each run will record parameter count, training tokens, theoretical FLOPs, wall-clock time, peak memory, and validation loss. The initial fitting target is:
+
+\[
+L(C)=L_{\infty}+A C^{-\alpha},
+\]
+
+where \(C\) is training compute. The largest run will be held out where practical to test extrapolation error, and the study will estimate the compute gain required for the two architectures to reach the same loss. The first study covers pretraining scaling only; rollout-token scaling for OPSD and GRPO is reserved for later work.
+
+#### 4. Lightweight OPSD post-training (planned)
 
 The post-training roadmap includes a resource-conscious **On-Policy Self-Distillation (OPSD)** experiment on the Dense Transformer + AttnRes model. A single model acts as both student and teacher under different contexts: the student sees the problem, while the teacher additionally receives privileged information such as a reference solution. Token-level distributions are aligned along trajectories sampled from the student policy.
 
@@ -194,6 +218,10 @@ python -m pytest
 
 - [Stanford CS336 course](https://stanford-cs336.github.io/)
 - [Stanford CS336 Assignment 1: Basics](https://github.com/stanford-cs336/assignment1-basics)
+- [Stanford CS336 Assignment 2: Systems](https://github.com/stanford-cs336/assignment2-systems)
+- [Stanford CS336 Assignment 3: Scaling](https://github.com/stanford-cs336/assignment3-scaling)
+- [Stanford CS336 Assignment 4: Data](https://github.com/stanford-cs336/assignment4-data)
+- [Stanford CS336 Assignment 5: Alignment](https://github.com/stanford-cs336/assignment5-alignment)
 - [Moonshot AI: Attention Residuals](https://github.com/MoonshotAI/Attention-Residuals)
 - [Attention Residuals paper](https://arxiv.org/abs/2603.15031)
 - [DeepSeekMoE paper](https://arxiv.org/abs/2401.06066)
