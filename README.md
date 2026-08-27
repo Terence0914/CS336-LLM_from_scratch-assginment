@@ -56,11 +56,11 @@ DeepSeekMoE 保留为独立的预训练架构探索，不进入本项目第一�
 
 第一轮 pilot 使用相同 tokenizer、数据切分、优化器和评测集，进行约 `2 种架构 × 3 个模型规模 × 3 个计算预算` 的受控实验，并记录参数量、训练 token、理论 FLOPs、wall-clock、峰值显存和 validation loss。随后拟合：
 
-\[
+$$
 L(C)=L_{\infty}+A C^{-\alpha}
-\]
+$$
 
-其中 \(C\) 表示训练计算量。最大规模实验将尽量保留为外推验证点，用于比较预测 loss 与真实 loss，并计算两种架构达到相同 loss 时的 compute gain。第一阶段只研究预训练 Scaling Law；OPSD 与 GRPO 的 rollout-token scaling 留作后续扩展。
+其中 $C$ 表示训练计算量。最大规模实验将尽量保留为外推验证点，用于比较预测 loss 与真实 loss，并计算两种架构达到相同 loss 时的 compute gain。第一阶段只研究预训练 Scaling Law；OPSD 与 GRPO 的 rollout-token scaling 留作后续扩展。
 
 #### 4. 轻量化 OPSD 后训练（计划中）
 
@@ -167,11 +167,11 @@ Following the spirit of CS336 Assignment 3, this project will fit separate compu
 
 The pilot grid will hold the tokenizer, data split, optimizer, and evaluation set fixed while running roughly `2 architectures × 3 model sizes × 3 compute budgets`. Each run will record parameter count, training tokens, theoretical FLOPs, wall-clock time, peak memory, and validation loss. The initial fitting target is:
 
-\[
+$$
 L(C)=L_{\infty}+A C^{-\alpha},
-\]
+$$
 
-where \(C\) is training compute. The largest run will be held out where practical to test extrapolation error, and the study will estimate the compute gain required for the two architectures to reach the same loss. The first study covers pretraining scaling only; rollout-token scaling for OPSD and GRPO is reserved for later work.
+where $C$ is training compute. The largest run will be held out where practical to test extrapolation error, and the study will estimate the compute gain required for the two architectures to reach the same loss. The first study covers pretraining scaling only; rollout-token scaling for OPSD and GRPO is reserved for later work.
 
 #### 4. Lightweight OPSD post-training (planned)
 
