@@ -2,9 +2,9 @@
 
 > Temporary bilingual README / 暂时性双语说明
 
-This is an independent educational and research implementation following Stanford University's **CS336: Language Modeling from Scratch** assignments. The project begins with Assignment 1 and will progressively study systems, scaling, data, and alignment topics from Assignments 2–5. It is not an official Stanford repository and is not affiliated with Stanford University, Moonshot AI, or DeepSeek.
+This is an independent educational and research implementation based on Stanford University's **CS336: Language Modeling from Scratch**. The working order is intentional: first complete an end-to-end research project on top of Assignment 1, then systematically study the course and faithfully complete Assignments 2–5, and finally use those foundations to improve the project. It is not an official Stanford repository and is not affiliated with Stanford University, Moonshot AI, or DeepSeek.
 
-本项目是沿斯坦福大学 **CS336：Language Modeling from Scratch** 系列作业开展的个人学习与研究实现：从 Assignment 1 起步，并逐步学习 Assignment 2–5 的系统、Scaling Law、数据和对齐内容。本项目并非斯坦福官方仓库，也不代表斯坦福大学、Moonshot AI 或 DeepSeek。
+本项目是基于斯坦福大学 **CS336：Language Modeling from Scratch** 开展的个人学习与研究实现。执行顺序是：先在 Assignment 1 基础上完成一个端到端研究项目，再系统听完课程并忠实完成 Assignment 2–5，最后用这些基础知识反过来升级当前项目。本项目并非斯坦福官方仓库，也不代表斯坦福大学、Moonshot AI 或 DeepSeek。
 
 ---
 
@@ -21,11 +21,47 @@ This is an independent educational and research implementation following Stanfor
 - 交叉熵损失、AdamW、学习率调度和训练循环；
 - TinyStories / OpenWebText 上的训练与评估。
 
-当前仓库处于 Assignment 1 基础实现阶段；其中 scaled dot-product attention 已通过 Stanford CS336 提供的三阶与四阶输入测试，并通过布尔 mask 的本地数值验证。后续作业将以学习和可复现实验为目标逐步加入，而不是预先宣称已经完成全部 CS336 内容。
+当前仓库处于 Assignment 1 基础实现与第一阶段研究项目的开发期；其中 scaled dot-product attention 已通过 Stanford CS336 提供的三阶与四阶输入测试，并通过布尔 mask 的本地数值验证。Assignment 2–5 将在当前项目完成后逐项学习和实现，不预先宣称已经完成全部 CS336 内容。
 
 ### 与官方作业的关系
 
 Stanford CS336 Assignment 1 的核心目标是实现一个标准 Transformer 语言模型及其完整训练流程；后续作业依次研究系统优化、Scaling Law、数据工程以及对齐与推理强化学习。课程会讲授 Mixture-of-Experts，但官方 Assignment 1 并未要求复现 DeepSeekMoE，因此本项目把 DeepSeekMoE 作为独立研究扩展。
+
+### 学习顺序与项目路线图
+
+这不是同时铺开 Assignment 1–5 的计划，而是一条“先自顶向下跑通，再自底向上夯实，最后回到项目验证”的路线。
+
+#### 第一阶段：完成当前端到端项目（现在）
+
+- [ ] 完成并测试 Assignment 1 的标准 Dense Transformer、训练与评测基线；
+- [ ] 实现 Dense Transformer + AttnRes，并与标准残差模型做受控预训练对比；
+- [ ] 用不同模型规模与训练预算拟合预训练 compute–loss Scaling Law；
+- [ ] 在同一个 Dense Transformer + AttnRes checkpoint 上完成中文 SFT；
+- [ ] 从相同 SFT checkpoint 分叉，完成 OPSD 与 GRPO 的公平对比；
+- [ ] 改变 rollout / 后训练 token 预算，比较 OPSD 与 GRPO 的后训练 scaling 曲线；
+- [ ] 固定数据版本、配置、随机种子与评测方式，保存可复现命令和真实实验结果。
+
+第一阶段的完成边界是：**模型能够端到端训练，AttnRes、OPSD 与 GRPO 均有可复现的基线和受控对比，预训练与后训练均有小规模 scaling 实验。** DeepSeekMoE 是独立的拓展目标；完整的系统优化和数据工程也不阻塞第一阶段结项，先只实现当前实验运行所必需的最小版本。
+
+#### 第二阶段：系统学习并完成 CS336 Assignment 2–5
+
+- [ ] 听完对应课程，并忠实完成每份官方作业的实现、测试与报告；
+- [ ] **Assignment 2 — Systems**：profiling、kernel、并行训练与效率优化；
+- [ ] **Assignment 3 — Scaling**：系统掌握 Scaling Law 的实验设计、拟合与外推；
+- [ ] **Assignment 4 — Data**：数据清洗、去重、质量过滤与数据归因；
+- [ ] **Assignment 5 — Alignment**：系统学习 SFT、偏好优化和推理强化学习。
+
+这一阶段的目标是夯实基础，而不是为了迁就当前项目而跳过官方作业内容。课程作业的完成状态与个人研究扩展分开记录。
+
+#### 第三阶段：用 Assignment 2–5 反哺项目
+
+- [ ] 用 Assignment 2 学到的 profiling 和优化方法重构训练系统；
+- [ ] 用 Assignment 3 的方法重新审计预训练与后训练 scaling 实验；
+- [ ] 用 Assignment 4 的流程重建中文训练数据并补充数据消融；
+- [ ] 用 Assignment 5 的知识重新检查 OPSD–GRPO 对比的目标、奖励和评测；
+- [ ] 复跑关键实验，形成项目的第二版结果与复盘。
+
+最终希望形成一条完整闭环：**从零实现模型 → 复现前沿方法 → 做受控实验 → 系统补完 CS336 → 用课程基础升级研究项目。**
 
 ### 个人研究扩展：复现与组合创新
 
@@ -60,7 +96,7 @@ $$
 L(C)=L_{\infty}+A C^{-\alpha}
 $$
 
-其中 $C$ 表示训练计算量。最大规模实验将尽量保留为外推验证点，用于比较预测 loss 与真实 loss，并计算两种架构达到相同 loss 时的 compute gain。第一阶段只研究预训练 Scaling Law；OPSD 与 GRPO 的 rollout-token scaling 留作后续扩展。
+其中 $C$ 表示训练计算量。最大规模实验将尽量保留为外推验证点，用于比较预测 loss 与真实 loss，并计算两种架构达到相同 loss 时的 compute gain。在后训练阶段，将保持起始 checkpoint、数据与评测方式一致，改变 rollout / 训练 token 预算，分别建立 OPSD 与 GRPO 的效果—成本曲线。预训练 compute scaling 与后训练 token-budget scaling 将分开报告，避免把不同含义的“计算量”混为一谈。
 
 #### 4. 轻量化 OPSD 后训练（计划中）
 
@@ -132,11 +168,47 @@ This project follows the Stanford CS336 assignment sequence, beginning with the 
 - cross-entropy loss, AdamW, learning-rate scheduling, and the training loop;
 - training and evaluation on TinyStories / OpenWebText.
 
-The repository is currently in the Assignment 1 implementation stage. The scaled dot-product attention implementation has passed the Stanford CS336 tests for third- and fourth-order tensors and has also been locally validated with a boolean mask. Assignments 2–5 will be incorporated progressively as learning and reproducible experiments, without claiming completion in advance.
+The repository is currently in the Assignment 1 implementation and phase-one research stage. The scaled dot-product attention implementation has passed the Stanford CS336 tests for third- and fourth-order tensors and has also been locally validated with a boolean mask. Assignments 2–5 will be studied and implemented one by one after the current project is complete; this README does not claim their completion in advance.
 
 ### Relationship to the official assignment
 
 The official CS336 Assignment 1 focuses on implementing a standard Transformer language model and its end-to-end training pipeline. Later assignments cover systems optimization, scaling laws, data engineering, and alignment/reasoning RL. Although the course covers Mixture-of-Experts, Assignment 1 does not require a DeepSeekMoE reproduction, so DeepSeekMoE is treated here as a separate research extension.
+
+### Learning order and project roadmap
+
+The plan is not to work on Assignments 1–5 simultaneously. It follows a top-down project pass, a bottom-up foundations pass, and then a return to the project for stricter validation.
+
+#### Phase 1: complete the current end-to-end project (now)
+
+- [ ] Complete and test the Assignment 1 Dense Transformer, training, and evaluation baselines;
+- [ ] implement Dense Transformer + AttnRes and compare it with the standard residual baseline under controlled pretraining conditions;
+- [ ] fit pretraining compute–loss scaling curves across model sizes and training budgets;
+- [ ] complete Chinese SFT from a fixed Dense Transformer + AttnRes checkpoint;
+- [ ] branch from the same SFT checkpoint for a fair OPSD-versus-GRPO comparison;
+- [ ] vary rollout / post-training token budgets and compare the post-training scaling curves of OPSD and GRPO;
+- [ ] pin data, configurations, seeds, and evaluation protocols, and preserve reproducible commands and measured results.
+
+Phase 1 is complete when **the model trains end to end; AttnRes, OPSD, and GRPO have reproducible baselines and controlled comparisons; and both pretraining and post-training have small-scale scaling studies.** DeepSeekMoE is an independent stretch objective. Full systems optimization and data engineering also do not block phase-one completion; only the minimum needed to run the current experiments is required at this stage.
+
+#### Phase 2: systematically study CS336 and complete Assignments 2–5
+
+- [ ] Finish the corresponding lectures and faithfully complete each official assignment, its tests, and its report;
+- [ ] **Assignment 2 — Systems:** profiling, kernels, parallel training, and efficiency optimization;
+- [ ] **Assignment 3 — Scaling:** rigorous scaling-law experiment design, fitting, and extrapolation;
+- [ ] **Assignment 4 — Data:** cleaning, deduplication, quality filtering, and data attribution;
+- [ ] **Assignment 5 — Alignment:** systematic study of SFT, preference optimization, and reasoning RL.
+
+The purpose of this phase is to strengthen the foundations rather than skip official content for the convenience of the current project. Official assignment progress and personal research extensions will be tracked separately.
+
+#### Phase 3: feed Assignments 2–5 back into the project
+
+- [ ] Refactor the training system using profiling and optimization techniques from Assignment 2;
+- [ ] re-audit the pretraining and post-training scaling studies using Assignment 3 methodology;
+- [ ] rebuild the Chinese data pipeline and add data ablations using Assignment 4;
+- [ ] revisit the objectives, rewards, and evaluation of the OPSD–GRPO comparison using Assignment 5;
+- [ ] rerun the key experiments and produce a second-version report and retrospective.
+
+The intended loop is: **build a model from scratch → reproduce modern methods → run controlled experiments → systematically complete CS336 → upgrade the research project with stronger foundations.**
 
 ### Personal research extensions: reproduction and integration
 
@@ -171,7 +243,7 @@ $$
 L(C)=L_{\infty}+A C^{-\alpha},
 $$
 
-where $C$ is training compute. The largest run will be held out where practical to test extrapolation error, and the study will estimate the compute gain required for the two architectures to reach the same loss. The first study covers pretraining scaling only; rollout-token scaling for OPSD and GRPO is reserved for later work.
+where $C$ is training compute. The largest run will be held out where practical to test extrapolation error, and the study will estimate the compute gain required for the two architectures to reach the same loss. During post-training, the starting checkpoint, data, and evaluation protocol will be held fixed while rollout / training-token budgets vary, producing separate quality–cost curves for OPSD and GRPO. Pretraining compute scaling and post-training token-budget scaling will be reported separately so that distinct meanings of “compute” are not conflated.
 
 #### 4. Lightweight OPSD post-training (planned)
 
