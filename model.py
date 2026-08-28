@@ -100,3 +100,44 @@ def scaled_dot_product_attention(Q, K, V, mask = None):
         "... query key, ... key width -> ... query width"
     )
     return combined
+
+class CausalMultiHeadSelfAttention(nn.Module):
+    def __init__(self, d_model : int, num_heads : int):
+        super().__init__()
+        self.num_heads = num_heads
+        self.d_model = d_model
+        assert d_model % num_heads == 0
+        self.d_head = d_model // num_heads
+        self.q_proj = Linear(d_model, d_model)
+        self.k_proj = Linear(d_model, d_model)
+        self.v_proj = Linear(d_model, d_model)
+        self.o_proj = Linear(d_model, d_model)
+
+    def forward(self, x):
+        q = self.q_proj(x)
+        k = self.k_proj(x)
+        v = self.v_proj(x)
+        # d_model(hidden size) = head * dim
+        q = rearrange(
+            q, "... seq (heads dim) -> ... heads seq dim",
+            heads = self.num_heads
+            )
+        k = rearrange(
+            k, "... seq (heads dim) -> ... heads seq dim",
+            heads = self.num_heads
+            )
+        v = rearrange(
+            v, "... seq (heads dim) -> ... heads seq dim",
+            heads = self.num_heads
+            )
+        seq_len = x.shape[-2]
+        causal_mask = torch.tril(
+            torch.ones(seq_len, seq_len, dtype = torch.bool, device = x.device)
+        )
+        attention_output = scaled_dot_product_attention(q, k, v, causal_mask)
+        attention_output = rearrange(
+            attention_output, "... heads seq dim -> ... seq (heads dim)"
+        )
+        output = self.o_proj(attention_output)
+        return output
+       
