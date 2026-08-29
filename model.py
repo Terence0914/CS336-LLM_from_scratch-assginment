@@ -150,4 +150,16 @@ class CausalMultiHeadSelfAttention(nn.Module):
         )
         output = self.o_proj(attention_output)
         return output
-       
+
+class TransformerBlock(nn.Module):
+    def __init__(self, d_model, num_heads, d_ff, max_seq_len, theta):
+        super().__init__()
+        self.ln1 = RMSNorm(d_model)
+        self.attn = CausalMultiHeadSelfAttention(d_model, num_heads, theta, max_seq_len)
+        self.ln2 = RMSNorm(d_model)
+        self.ffn = SwiGLU(d_model, d_ff)
+
+    def forward(self, x):
+        y = x + self.attn(self.ln1(x))
+        output = y + self.ffn(self.ln2(y))
+        return output
