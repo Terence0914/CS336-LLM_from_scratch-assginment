@@ -14,14 +14,14 @@ try:
     from cs336_basics.train_bpe import train_bpe
     from cs336_basics.tokenizer import Tokenizer
     from cs336_basics.model import Linear, Embedding, RMSNorm, SwiGLU, RotaryPositionalEmbedding
-    from cs336_basics.model import scaled_dot_product_attention, CausalMultiHeadSelfAttention, TransformerBlock
+    from cs336_basics.model import scaled_dot_product_attention, CausalMultiHeadSelfAttention, TransformerBlock, TransformerLM
     
 # use your local device to pytest this project
 except ImportError:
     from train_bpe import train_bpe
     from tokenizer import Tokenizer
     from model import Linear, Embedding, RMSNorm, SwiGLU, RotaryPositionalEmbedding
-    from model import scaled_dot_product_attention, CausalMultiHeadSelfAttention, TransformerBlock
+    from model import scaled_dot_product_attention, CausalMultiHeadSelfAttention, TransformerBlock, TransformerLM
 
 
 
@@ -407,7 +407,14 @@ def run_transformer_lm(
         Float[Tensor, "batch_size sequence_length vocab_size"]: Tensor with the predicted unnormalized
         next-word distribution for each token.
     """
-    raise NotImplementedError
+    lm = TransformerLM(vocab_size, context_length, d_model, num_layers, num_heads, d_ff, rope_theta)
+    lm = lm.to(device = weights["token_embeddings.weight"].device, dtype = weights["token_embeddings.weight"].dtype)
+    lm_weights = {}
+    for key, value in weights.items():
+        adapted_key = key.replace("attn.output_proj.weight", "attn.o_proj.weight")
+        lm_weights[adapted_key] = value
+    lm.load_state_dict(lm_weights)
+    return lm(in_indices)
 
 
 def run_rmsnorm(
