@@ -181,3 +181,42 @@ class TransformerLM(nn.Module):
             hidden = block(hidden)
         hidden = self.ln_final(hidden)
         return self.lm_head(hidden)
+
+class AdamW(torch.optim.Optimizer):
+    def __init__(self, params, lr, betas, eps, weight_decay):
+        defaults = {"lr" : lr, "betas" : betas, "eps" : eps, "weight_decay" : weight_decay}
+        super().__init__(params, defaults)
+
+    @torch.no_grad()
+    def step(self):
+        for group in self.param_groups:
+            for p in group["params"]:
+                if p.grad is None:
+                    continue
+                state = self.state[p]
+                if not state:
+                    state["t"] = 0
+                    state["m"]= torch.zeros_like(p)
+                    state["v"]= torch.zeros_like(p)
+
+                state["t"] += 1
+                g = p.grad
+                beta1, beta2 = group["betas"]
+
+                state["m"] = beta1 * state["m"] + (1 - beta1) * g
+                state["v"] = beta2 * state["v"] + (1 - beta2) * g**2
+
+                c1 = 1 - beta1 ** state["t"]
+                c2 = 1 - beta2 ** state["t"]
+
+                alpha_t = group["lr"] * (c2 ** 0.5 / c1)
+                denom = state["v"].sqrt() + group["eps"]
+                update = (alpha_t * state["m"] / denom)
+                p.sub_(update)
+
+                factor = 1 - group["lr"] * group["weight_decay"]
+                p.mul_(factor)
+
+
+
+
