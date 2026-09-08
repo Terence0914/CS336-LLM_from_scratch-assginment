@@ -15,7 +15,7 @@ try:
     from cs336_basics.tokenizer import Tokenizer
     from cs336_basics.model import Linear, Embedding, RMSNorm, SwiGLU, RotaryPositionalEmbedding
     from cs336_basics.model import scaled_dot_product_attention, CausalMultiHeadSelfAttention, TransformerBlock, TransformerLM
-    from cs336_basics.model import AdamW, get_lr_cosine_schedule
+    from cs336_basics.model import AdamW, get_lr_cosine_schedule, gradient_clipping
     
 # use your local device to pytest this project
 except ImportError:
@@ -23,7 +23,7 @@ except ImportError:
     from tokenizer import Tokenizer
     from model import Linear, Embedding, RMSNorm, SwiGLU, RotaryPositionalEmbedding
     from model import scaled_dot_product_attention, CausalMultiHeadSelfAttention, TransformerBlock, TransformerLM
-    from model import AdamW, get_lr_cosine_schedule
+    from model import AdamW, get_lr_cosine_schedule, gradient_clipping
 
 
 
@@ -547,7 +547,7 @@ def run_gradient_clipping(parameters: Iterable[torch.nn.Parameter], max_l2_norm:
 
     The gradients of the parameters (parameter.grad) should be modified in-place.
     """
-    raise NotImplementedError
+    return gradient_clipping(parameters, max_l2_norm)
 
 
 def get_adamw_cls() -> Any:

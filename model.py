@@ -227,6 +227,24 @@ def get_lr_cosine_schedule(t, a_max, a_min, Tw, Tc):
         w = (1 + math.cos(math.pi * p)) / 2
         a_t = a_min + w * (a_max - a_min)
     return a_t
+
+def gradient_clipping(parameters, max_l2_norm):
+    params_with_grad = []
+    for p in parameters:
+        if p.grad is not None:
+            params_with_grad.append(p)
+    sum_sq = 0
+    for s in params_with_grad:
+        squared_sum = (s.grad ** 2).sum()
+        sum_sq += squared_sum
+
+    total_norm = math.sqrt(sum_sq)
+    if total_norm > max_l2_norm:
+        scale = max_l2_norm / (total_norm + 1e-6)
+        for values in params_with_grad:
+            values.grad.mul_(scale)
+        
+
         
 
 
