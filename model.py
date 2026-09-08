@@ -217,6 +217,19 @@ class AdamW(torch.optim.Optimizer):
                 factor = 1 - group["lr"] * group["weight_decay"]
                 p.mul_(factor)
 
+def get_lr_cosine_schedule(t, a_max, a_min, Tw, Tc):
+    if t < Tw:
+        return a_max * (t / Tw)
+    if t > Tc:
+        return a_min
+    else:
+        p = (t - Tw) / (Tc - Tw)
+        w = (1 + math.cos(math.pi * p)) / 2
+        a_t = a_min + w * (a_max - a_min)
+    return a_t
+        
+
+
 
 
 

@@ -15,7 +15,7 @@ try:
     from cs336_basics.tokenizer import Tokenizer
     from cs336_basics.model import Linear, Embedding, RMSNorm, SwiGLU, RotaryPositionalEmbedding
     from cs336_basics.model import scaled_dot_product_attention, CausalMultiHeadSelfAttention, TransformerBlock, TransformerLM
-    from cs336_basics.model import AdamW
+    from cs336_basics.model import AdamW, get_lr_cosine_schedule
     
 # use your local device to pytest this project
 except ImportError:
@@ -23,7 +23,7 @@ except ImportError:
     from tokenizer import Tokenizer
     from model import Linear, Embedding, RMSNorm, SwiGLU, RotaryPositionalEmbedding
     from model import scaled_dot_product_attention, CausalMultiHeadSelfAttention, TransformerBlock, TransformerLM
-    from model import AdamW
+    from model import AdamW, get_lr_cosine_schedule
 
 
 
@@ -582,7 +582,7 @@ def run_get_lr_cosine_schedule(
     Returns:
         Learning rate at the given iteration under the specified schedule.
     """
-    raise NotImplementedError
+    return get_lr_cosine_schedule(it, max_learning_rate, min_learning_rate, warmup_iters, cosine_cycle_iters)
 
 
 def run_save_checkpoint(
