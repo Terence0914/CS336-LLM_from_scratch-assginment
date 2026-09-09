@@ -15,7 +15,7 @@ try:
     from cs336_basics.tokenizer import Tokenizer
     from cs336_basics.model import Linear, Embedding, RMSNorm, SwiGLU, RotaryPositionalEmbedding
     from cs336_basics.model import scaled_dot_product_attention, CausalMultiHeadSelfAttention, TransformerBlock, TransformerLM
-    from cs336_basics.model import AdamW, get_lr_cosine_schedule, gradient_clipping
+    from cs336_basics.model import AdamW, get_lr_cosine_schedule, gradient_clipping, get_batch
     
 # use your local device to pytest this project
 except ImportError:
@@ -23,7 +23,7 @@ except ImportError:
     from tokenizer import Tokenizer
     from model import Linear, Embedding, RMSNorm, SwiGLU, RotaryPositionalEmbedding
     from model import scaled_dot_product_attention, CausalMultiHeadSelfAttention, TransformerBlock, TransformerLM
-    from model import AdamW, get_lr_cosine_schedule, gradient_clipping
+    from model import AdamW, get_lr_cosine_schedule, gradient_clipping, get_batch
 
 
 
@@ -480,7 +480,7 @@ def run_get_batch(
         is the sampled input sequences, and the second tuple item is the corresponding
         language modeling labels.
     """
-    raise NotImplementedError
+    return get_batch(dataset, batch_size, context_length, device)
 
 
 def run_softmax(in_features: Float[Tensor, " ..."], dim: int) -> Float[Tensor, " ..."]:

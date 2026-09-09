@@ -2,6 +2,7 @@ import torch
 from torch import nn
 import math
 from einops import rearrange, einsum
+import numpy as np
 
 class Linear(nn.Module):
     def __init__ (self, in_features : int, out_features : int, device: torch.device | None = None, dtype: torch.dtype | None = None):
@@ -243,6 +244,25 @@ def gradient_clipping(parameters, max_l2_norm):
         scale = max_l2_norm / (total_norm + 1e-6)
         for values in params_with_grad:
             values.grad.mul_(scale)
+
+def get_batch(dataset, batch_size, context_length, device):
+    starts = np.random.randint(len(dataset) - context_length, size = batch_size)
+    input_s = []
+    target_s = []
+    for s in starts:
+        left = s
+        right = s + context_length
+        input_s.append(dataset[left : right])
+        target_s.append(dataset[left + 1 : right + 1])
+    input_matrix = np.stack(input_s)
+    input_tensor = torch.tensor(input_matrix, dtype = torch.long, device = device)
+    target_matrix = np.stack(target_s)
+    target_tensor = torch.tensor(target_matrix, dtype = torch.long, device = device)
+    return input_tensor, target_tensor
+        
+
+
+
         
 
         
