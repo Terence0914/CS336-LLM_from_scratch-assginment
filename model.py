@@ -259,6 +259,20 @@ def get_batch(dataset, batch_size, context_length, device):
     target_matrix = np.stack(target_s)
     target_tensor = torch.tensor(target_matrix, dtype = torch.long, device = device)
     return input_tensor, target_tensor
+
+def save_checkpoint(model, optimizer, iteration, out):
+    snapshot = {
+        "model" : model.state_dict(),
+        "optimizer" : optimizer.state_dict(),
+        "iteration" : iteration,
+    }
+    torch.save(snapshot, out)
+
+def load_checkpoint(src, model, optimizer):
+    checkpoint = torch.load(src)
+    model.load_state_dict(checkpoint["model"])
+    optimizer.load_state_dict(checkpoint["optimizer"])
+    return checkpoint["iteration"]
         
 
 

@@ -15,7 +15,7 @@ try:
     from cs336_basics.tokenizer import Tokenizer
     from cs336_basics.model import Linear, Embedding, RMSNorm, SwiGLU, RotaryPositionalEmbedding
     from cs336_basics.model import scaled_dot_product_attention, CausalMultiHeadSelfAttention, TransformerBlock, TransformerLM
-    from cs336_basics.model import AdamW, get_lr_cosine_schedule, gradient_clipping, get_batch
+    from cs336_basics.model import AdamW, get_lr_cosine_schedule, gradient_clipping, get_batch, save_checkpoint, load_checkpoint
     
 # use your local device to pytest this project
 except ImportError:
@@ -23,7 +23,7 @@ except ImportError:
     from tokenizer import Tokenizer
     from model import Linear, Embedding, RMSNorm, SwiGLU, RotaryPositionalEmbedding
     from model import scaled_dot_product_attention, CausalMultiHeadSelfAttention, TransformerBlock, TransformerLM
-    from model import AdamW, get_lr_cosine_schedule, gradient_clipping, get_batch
+    from model import AdamW, get_lr_cosine_schedule, gradient_clipping, get_batch, save_checkpoint, load_checkpoint
 
 
 
@@ -601,7 +601,7 @@ def run_save_checkpoint(
             we've completed.
         out (str | os.PathLike | BinaryIO | IO[bytes]): Path or file-like object to serialize the model, optimizer, and iteration to.
     """
-    raise NotImplementedError
+    save_checkpoint(model, optimizer, iteration, out)
 
 
 def run_load_checkpoint(
@@ -622,7 +622,7 @@ def run_load_checkpoint(
     Returns:
         int: the previously-serialized number of iterations.
     """
-    raise NotImplementedError
+    return load_checkpoint(src, model, optimizer)
 
 
 def get_tokenizer(
