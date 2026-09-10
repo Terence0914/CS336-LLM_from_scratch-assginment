@@ -16,6 +16,8 @@ try:
     from cs336_basics.model import Linear, Embedding, RMSNorm, SwiGLU, RotaryPositionalEmbedding
     from cs336_basics.model import scaled_dot_product_attention, CausalMultiHeadSelfAttention, TransformerBlock, TransformerLM
     from cs336_basics.model import AdamW, get_lr_cosine_schedule, gradient_clipping, get_batch, save_checkpoint, load_checkpoint
+    from cs336_basics.losses import cross_entropy
+    from cs336_basics.ops import softmax
     
 # use your local device to pytest this project
 except ImportError:
@@ -24,6 +26,8 @@ except ImportError:
     from model import Linear, Embedding, RMSNorm, SwiGLU, RotaryPositionalEmbedding
     from model import scaled_dot_product_attention, CausalMultiHeadSelfAttention, TransformerBlock, TransformerLM
     from model import AdamW, get_lr_cosine_schedule, gradient_clipping, get_batch, save_checkpoint, load_checkpoint
+    from losses import cross_entropy
+    from ops import softmax
 
 
 
@@ -496,20 +500,7 @@ def run_softmax(in_features: Float[Tensor, " ..."], dim: int) -> Float[Tensor, "
         Float[Tensor, "..."]: Tensor of with the same shape as `in_features` with the output of
         softmax normalizing the specified `dim`.
     """
-    # m = max_j(v_j)：沿 dim 找最大值；保留该维度以便后续广播。
-    largest = in_features.max(dim=dim, keepdim=True).values
-
-    # z_i = v_i - m：平移分数，使最大值变成 0，避免计算 exp(大数) 时溢出。
-    stabilized = in_features - largest
-
-    # n_i = exp(z_i) = exp(v_i - m)：将平移后的每个分数转换为正数。
-    exponentials = torch.exp(stabilized)
-
-    # Z = sum_j exp(v_j - m)：沿同一个 dim 计算 Softmax 的归一化分母。
-    normalizer = exponentials.sum(dim=dim, keepdim=True)
-
-    # softmax(v)_i = exp(v_i - m) / sum_j exp(v_j - m)
-    return exponentials / normalizer
+    return softmax(in_features, dim)
     
 
 
@@ -528,14 +519,7 @@ def run_cross_entropy(
     Returns:
         Float[Tensor, ""]: The average cross-entropy loss across examples.
     """
-    center = inputs.max(dim = -1, keepdim = True).values
-    shifted = inputs - center
-    log_normalizer = torch.log(torch.exp(shifted).sum(dim = -1))
-    chosen = shifted.gather(dim = -1, index = targets.unsqueeze(-1))
-    chosen = chosen.squeeze(-1)
-    loss = log_normalizer - chosen
-    return loss.mean()
-    
+    return cross_entropy(inputs, targets)
 
 
 def run_gradient_clipping(parameters: Iterable[torch.nn.Parameter], max_l2_norm: float) -> None:
