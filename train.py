@@ -52,7 +52,7 @@ optimizer = AdamW(
     args.learning_rate,
     (args.beta1, args.beta2),
     args.eps,
-    args.weight_dacay,
+    args.weight_decay,
 )
 
 for iteration in range(1, args.num_iterations + 1):
