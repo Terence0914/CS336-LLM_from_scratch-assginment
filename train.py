@@ -1,7 +1,7 @@
 import torch
 import numpy as np
 import argparse
-import torch.nn.functional as F
+from losses import cross_entropy
 
 from model import TransformerLM, AdamW, get_batch, get_lr_cosine_schedule, gradient_clipping, save_checkpoint
 
@@ -71,7 +71,7 @@ for iteration in range(1, args.num_iterations + 1):
     logits = model(x)
     flat_logits = logits.reshape(-1, args.vocab_size)
     flat_targets = y.reshape(-1)
-    loss = F.cross_entropy(flat_logits, flat_targets)
+    loss = cross_entropy(flat_logits, flat_targets)
     loss.backward()
     gradient_clipping(model.parameters(), args.max_l2_norm)
     optimizer.step()
@@ -84,7 +84,7 @@ for iteration in range(1, args.num_iterations + 1):
             val_logits = model(val_x)
             val_flat_logits = val_logits.reshape(-1, args.vocab_size)
             val_flat_targets = val_y.reshape(-1)
-            val_loss = F.cross_entropy(val_flat_logits, val_flat_targets)
+            val_loss = cross_entropy(val_flat_logits, val_flat_targets)
         print(f"iteration {iteration}: val loss = {val_loss.item():.4f}")
 
     if iteration % args.checkpoint_interval == 0:
