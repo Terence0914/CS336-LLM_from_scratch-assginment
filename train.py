@@ -5,7 +5,7 @@ import torch.nn.functional as F
 
 from model import TransformerLM, AdamW, get_batch, get_lr_cosine_schedule, gradient_clipping, save_checkpoint
 
-parser = argparse.ArgymentParser()
+parser = argparse.ArgumentParser()
 parser.add_argument("--train-path", type = str, required = True)
 parser.add_argument("--val-path", type = str, required = True)
 parser.add_argument("--vocab-size", type = int, required = True)
