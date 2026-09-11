@@ -168,6 +168,7 @@ class TransformerBlock(nn.Module):
 class TransformerLM(nn.Module):
     def __init__(self, vocab_size, context_length, d_model, num_layers, num_heads, d_ff, rope_theta):
         super().__init__()
+        self.context_length = context_length
         self.token_embeddings = Embedding(vocab_size, d_model)
         self.layers = nn.ModuleList([
             TransformerBlock(d_model, num_heads, d_ff, context_length, rope_theta)
