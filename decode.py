@@ -23,7 +23,7 @@ def generate(model, tokenizer, prompt, max_new_tokens, temperature = 1.0, top_p=
                     probs, descending = True, dim = -1
                 )
                 cumulative_probs = torch.cumsum(sorted_probs, dim = -1)
-                sorted_mask = cumulative_probs > top_p
+                sorted_mask = cumulative_probs >= top_p
                 sorted_mask[..., 1:] = sorted_mask[..., :-1].clone()
                 sorted_mask[..., 0] = False
                 sorted_probs = sorted_probs.masked_fill(sorted_mask, 0.0)
