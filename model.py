@@ -63,10 +63,10 @@ class SwiGLU(nn.Module):
     def forward(self, x : torch.Tensor) -> torch.Tensor:
         first_branch = self.w1(x)
         # SiLu = x * sigmoid(x)
-        silu = silu(first_branch)
+        silu_output = silu(first_branch)
         third_branch = self.w3(x)
         # Element-wise multiplication
-        result = silu * third_branch
+        result = silu_output * third_branch
         second_branch = self.w2(result)
         return second_branch
 
