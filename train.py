@@ -1,6 +1,7 @@
 import torch
 import numpy as np
 import argparse
+import csv
 from losses import cross_entropy
 
 from model import TransformerLM, AdamW, get_batch, get_lr_cosine_schedule, gradient_clipping, save_checkpoint
@@ -33,10 +34,17 @@ parser.add_argument("--min-learning-rate", type=float, required=True)
 parser.add_argument("--warmup-iters", type=int, required=True)
 parser.add_argument("--cosine-cycle-iters", type=int, required=True)
 parser.add_argument("--max-l2-norm", type=float, required=True)
+parser.add_argument("--seed", type = int, default = 42)
+parser.add_argument("--metrics-path", type = str, default="metrics.csv")
 
 args = parser.parse_args()
+np.random.seed(args.seed)
+torch.manual_seed(args.seed)
 train_data = np.memmap(args.train_path, dtype=np.dtype(args.data_dtype), mode="r")
 val_data = np.memmap(args.val_path, dtype=np.dtype(args.data_dtype), mode="r")
+with open(args.metrics_path, "w", newline = "") as file:
+    writer = csv.writer(file)
+    writer.writerow(["iteration", "train_loss", "val_loss"])
 
 model = TransformerLM(
     vocab_size = args.vocab_size, 
@@ -92,6 +100,9 @@ for iteration in range(1, args.num_iterations + 1):
 
         validation_loss /= args.val_batches
         print(f"iteration {iteration}: val loss = {validation_loss:.4f}")
+        with open(args.metrics_path, "a", newline = "") as file:
+            writer = csv.writer(file)
+            writer.writerow([iteration, loss.item(), validation_loss])
 
     if iteration % args.checkpoint_interval == 0:
         save_checkpoint(model, optimizer, iteration, args.checkpoint_path)
