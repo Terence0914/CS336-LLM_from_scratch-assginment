@@ -45,6 +45,10 @@ class RMSNorm(nn.Module):
         # x / sqrt(mean_square + eps) * g
         return self.weight * normalized.to(original_dtype)
 
+def silu(x):
+    silu = torch.sigmoid(x) * x
+    return silu
+
 class SwiGLU(nn.Module):
     def __init__ (self, d_model, d_ff : int | None = None, device = None, dtype = None):
         super().__init__()
@@ -59,7 +63,7 @@ class SwiGLU(nn.Module):
     def forward(self, x : torch.Tensor) -> torch.Tensor:
         first_branch = self.w1(x)
         # SiLu = x * sigmoid(x)
-        silu = torch.sigmoid(first_branch) * first_branch
+        silu = silu(first_branch)
         third_branch = self.w3(x)
         # Element-wise multiplication
         result = silu * third_branch
