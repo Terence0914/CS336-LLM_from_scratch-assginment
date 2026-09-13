@@ -26,6 +26,7 @@ parser.add_argument("--checkpoint-path", type=str, required=True)
 parser.add_argument("--checkpoint-interval", type=int, required=True)
 parser.add_argument("--log-interval", type=int, required=True)
 parser.add_argument("--val-interval", type=int, required=True)
+parser.add_argument("--val-batches", type=int, default = 20)
 parser.add_argument("--data-dtype", type=str, required=True)
 parser.add_argument("--device", type=str, default = "cpu")
 parser.add_argument("--min-learning-rate", type=float, required=True)
@@ -58,7 +59,7 @@ optimizer = AdamW(
 for iteration in range(1, args.num_iterations + 1):
     optimizer.zero_grad()
     current_lr = get_lr_cosine_schedule(
-        iteration,
+        iteration - 1,
         args.learning_rate,
         args.min_learning_rate,
         args.warmup_iters,
@@ -79,13 +80,18 @@ for iteration in range(1, args.num_iterations + 1):
         print(f"iteration {iteration}: train loss = {loss.item():.4f}")
 
     if iteration % args.val_interval == 0:
-        val_x, val_y = get_batch(val_data, args.batch_size, args.context_length, args.device)
-        with torch.no_grad():
-            val_logits = model(val_x)
-            val_flat_logits = val_logits.reshape(-1, args.vocab_size)
-            val_flat_targets = val_y.reshape(-1)
-            val_loss = cross_entropy(val_flat_logits, val_flat_targets)
-        print(f"iteration {iteration}: val loss = {val_loss.item():.4f}")
+        validation_loss = 0
+        for _ in range(args.val_batches):
+            val_x, val_y = get_batch(val_data, args.batch_size, args.context_length, args.device)
+            with torch.no_grad():
+                val_logits = model(val_x)
+                val_flat_logits = val_logits.reshape(-1, args.vocab_size)
+                val_flat_targets = val_y.reshape(-1)
+                val_loss = cross_entropy(val_flat_logits, val_flat_targets)
+                validation_loss += val_loss.item()
+
+        validation_loss /= args.val_batches
+        print(f"iteration {iteration}: val loss = {validation_loss:.4f}")
 
     if iteration % args.checkpoint_interval == 0:
         save_checkpoint(model, optimizer, iteration, args.checkpoint_path)
