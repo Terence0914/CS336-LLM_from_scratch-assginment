@@ -165,11 +165,11 @@ class Tokenizer:
             matches = list(re.finditer(stream_pattern, pending))
             if len(matches) <= 1:
                 continue
-            
+
             safe_end = matches[-1].start()
             for special in self.special_tokens:
                 for prefix_len in range(1, len(special)):
-                    if pending.endswitch(special[:prefix_len]):
+                    if pending.endswith(special[:prefix_len]):
                         prefix_start = len(pending) - prefix_len
                         safe_end = min(safe_end, prefix_start)
 
