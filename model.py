@@ -43,7 +43,8 @@ class RMSNorm(nn.Module):
         # x / sqrt(mean_square + eps)
         normalized = x_float * inverse_rms
         # x / sqrt(mean_square + eps) * g
-        return self.weight * normalized.to(original_dtype)
+        result = self.weight * normalized
+        return result.to(original_dtype)
 
 def silu(x):
     silu = torch.sigmoid(x) * x
@@ -209,8 +210,12 @@ class AdamW(torch.optim.Optimizer):
                 g = p.grad
                 beta1, beta2 = group["betas"]
 
+                factor = 1 - group["lr"] * group["weight_decay"]
+                p.mul_(factor)
+
                 state["m"] = beta1 * state["m"] + (1 - beta1) * g
                 state["v"] = beta2 * state["v"] + (1 - beta2) * g**2
+
 
                 c1 = 1 - beta1 ** state["t"]
                 c2 = 1 - beta2 ** state["t"]
@@ -219,9 +224,6 @@ class AdamW(torch.optim.Optimizer):
                 denom = state["v"].sqrt() + group["eps"]
                 update = (alpha_t * state["m"] / denom)
                 p.sub_(update)
-
-                factor = 1 - group["lr"] * group["weight_decay"]
-                p.mul_(factor)
 
 def get_lr_cosine_schedule(t, a_max, a_min, Tw, Tc):
     if t < Tw:

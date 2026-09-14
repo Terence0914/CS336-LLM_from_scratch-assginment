@@ -155,10 +155,35 @@ class Tokenizer:
 
     def encode_iterable(self, iterable):
         """逐块编码字符串迭代器，并逐个产出 ID，避免一次加载整个大文件。"""
+        pending = ""
+        if self.special_alternation:
+            stream_pattern = f"(?:{self.special_alternation})|(?:{PAT})"
+        else:
+            stream_pattern = PAT
         for chunk in iterable:
-            chunk_ids = self.encode(chunk)
-            for token_id in chunk_ids:
+            pending += chunk
+            matches = list(re.finditer(stream_pattern, pending))
+            if len(matches) <= 1:
+                continue
+            
+            safe_end = matches[-1].start()
+            for special in self.special_tokens:
+                for prefix_len in range(1, len(special)):
+                    if pending.endswitch(special[:prefix_len]):
+                        prefix_start = len(pending) - prefix_len
+                        safe_end = min(safe_end, prefix_start)
+
+            safe_text = pending[:safe_end]
+            pending = pending[safe_end:]
+            safe_ids = self.encode(safe_text)
+            for token_id in safe_ids:
                 yield token_id
+
+        remaining_ids = self.encode(pending)
+        for token_id in remaining_ids:
+            yield token_id
+
+        
 
 
         
