@@ -1,9 +1,8 @@
 import torch
 import numpy as np
 import argparse
-import csv
 from losses import cross_entropy
-
+from experiment_logger import ExperimentLogger
 from model import TransformerLM, AdamW, get_batch, get_lr_cosine_schedule, gradient_clipping, save_checkpoint
 
 parser = argparse.ArgumentParser()
@@ -42,9 +41,7 @@ np.random.seed(args.seed)
 torch.manual_seed(args.seed)
 train_data = np.memmap(args.train_path, dtype=np.dtype(args.data_dtype), mode="r")
 val_data = np.memmap(args.val_path, dtype=np.dtype(args.data_dtype), mode="r")
-with open(args.metrics_path, "w", newline = "") as file:
-    writer = csv.writer(file)
-    writer.writerow(["iteration", "train_loss", "val_loss"])
+logger = ExperimentLogger(args.metrics_path)
 
 model = TransformerLM(
     vocab_size = args.vocab_size, 
@@ -100,9 +97,7 @@ for iteration in range(1, args.num_iterations + 1):
 
         validation_loss /= args.val_batches
         print(f"iteration {iteration}: val loss = {validation_loss:.4f}")
-        with open(args.metrics_path, "a", newline = "") as file:
-            writer = csv.writer(file)
-            writer.writerow([iteration, loss.item(), validation_loss])
+        logger.log(iteration, loss.item(), validation_loss)
 
     if iteration % args.checkpoint_interval == 0:
         save_checkpoint(model, optimizer, iteration, args.checkpoint_path)
