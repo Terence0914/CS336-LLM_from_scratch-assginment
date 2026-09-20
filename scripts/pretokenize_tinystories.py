@@ -3,7 +3,7 @@ from multiprocessing import Pool
 
 import numpy as np
 
-from tokenizer import Tokenizer
+from tokenizer.tokenizer import Tokenizer
 from tokenizer.train_bpe import find_chunk_boundaries
 
 CODE_DIR = Path(__file__).resolve().parent

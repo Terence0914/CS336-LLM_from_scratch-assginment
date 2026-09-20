@@ -9,23 +9,57 @@ import torch
 from jaxtyping import Bool, Float, Int
 from torch import Tensor
 
-# use colab or other to pytest this project
 try:
+    # Colab / assignment original structure
     from cs336_basics.train_bpe import train_bpe
     from cs336_basics.tokenizer import Tokenizer
-    from cs336_basics.model import Linear, Embedding, RMSNorm, silu, SwiGLU, RotaryPositionalEmbedding
-    from cs336_basics.model import scaled_dot_product_attention, CausalMultiHeadSelfAttention, TransformerBlock, TransformerLM
-    from cs336_basics.model import AdamW, get_lr_cosine_schedule, gradient_clipping, get_batch, save_checkpoint, load_checkpoint
+
+    from cs336_basics.model import (
+        Linear,
+        Embedding,
+        RMSNorm,
+        silu,
+        SwiGLU,
+        RotaryPositionalEmbedding,
+        scaled_dot_product_attention,
+        CausalMultiHeadSelfAttention,
+        TransformerBlock,
+        TransformerLM,
+        AdamW,
+        get_lr_cosine_schedule,
+        gradient_clipping,
+        get_batch,
+        save_checkpoint,
+        load_checkpoint,
+    )
+
     from cs336_basics.losses import cross_entropy
     from cs336_basics.ops import softmax
-    
-# use your local device to pytest this project
+
 except ImportError:
+    # VSCode reorganized structure
     from tokenizer.train_bpe import train_bpe
-    from tokenizer import Tokenizer
-    from model import Linear, Embedding, RMSNorm, silu, SwiGLU, RotaryPositionalEmbedding
-    from model import scaled_dot_product_attention, CausalMultiHeadSelfAttention, TransformerBlock, TransformerLM
-    from model import AdamW, get_lr_cosine_schedule, gradient_clipping, get_batch, save_checkpoint, load_checkpoint
+    from tokenizer.tokenizer import Tokenizer
+
+    from model.model import (
+        Linear,
+        Embedding,
+        RMSNorm,
+        silu,
+        SwiGLU,
+        RotaryPositionalEmbedding,
+        scaled_dot_product_attention,
+        CausalMultiHeadSelfAttention,
+        TransformerBlock,
+        TransformerLM,
+        AdamW,
+        get_lr_cosine_schedule,
+        gradient_clipping,
+        get_batch,
+        save_checkpoint,
+        load_checkpoint,
+    )
+
     from model.losses import cross_entropy
     from model.ops import softmax
 
