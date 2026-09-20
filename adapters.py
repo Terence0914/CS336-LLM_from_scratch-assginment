@@ -21,13 +21,13 @@ try:
     
 # use your local device to pytest this project
 except ImportError:
-    from train_bpe import train_bpe
+    from tokenizer.train_bpe import train_bpe
     from tokenizer import Tokenizer
     from model import Linear, Embedding, RMSNorm, silu, SwiGLU, RotaryPositionalEmbedding
     from model import scaled_dot_product_attention, CausalMultiHeadSelfAttention, TransformerBlock, TransformerLM
     from model import AdamW, get_lr_cosine_schedule, gradient_clipping, get_batch, save_checkpoint, load_checkpoint
-    from losses import cross_entropy
-    from ops import softmax
+    from model.losses import cross_entropy
+    from model.ops import softmax
 
 
 

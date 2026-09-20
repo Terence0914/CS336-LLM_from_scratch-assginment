@@ -13,7 +13,7 @@ try:
 except ImportError:
     resource = None
 
-from train_bpe import train_bpe
+from tokenizer.train_bpe import train_bpe
 
 
 def max_rss_gb() -> float:

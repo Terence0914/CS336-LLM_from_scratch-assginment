@@ -1,4 +1,4 @@
-from train_bpe import train_bpe
+from tokenizer.train_bpe import train_bpe
 
 
 def show_case(name, input_path, vocab_size, special_tokens):

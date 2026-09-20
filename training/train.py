@@ -1,8 +1,8 @@
 import torch
 import numpy as np
 import argparse
-from losses import cross_entropy
-from experiment_logger import ExperimentLogger
+from model.losses import cross_entropy
+from training.experiment_logger import ExperimentLogger
 from model import TransformerLM, AdamW, get_batch, get_lr_cosine_schedule, gradient_clipping, save_checkpoint
 
 parser = argparse.ArgumentParser()
